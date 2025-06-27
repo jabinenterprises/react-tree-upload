@@ -3,7 +3,11 @@ import { supabase } from "../lib/supabase";
 import { useState, useRef, useEffect } from "react";
 import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
+import type { TreeAudio } from "../types";
 // import { unescape } from "querystring";
+
+const supabaseStorageUrl =
+  "https://qsvuddnbvuuzpnwofnzy.supabase.co/storage/v1/object/public/tree-audio/";
 
 const GenerateQRCode = () => {
   const { id } = useParams<{ id: string }>();
@@ -11,6 +15,25 @@ const GenerateQRCode = () => {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
+  const [treeAudio, setTreeAudio] = useState<TreeAudio | null>(null);
+  // const [audioExists, setAudioExists] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Check if audio exists
+      const { data: audioData } = await supabase
+        .from("tree_audio")
+        .select("*")
+        .eq("tree_id", id)
+        .single();
+
+      setTreeAudio(audioData);
+    };
+
+    fetchData();
+  }, [id]);
+
+  const audioPath = treeAudio?.audio_path;
 
   useEffect(() => {
     const checkAudio = async () => {
@@ -29,9 +52,12 @@ const GenerateQRCode = () => {
     checkAudio();
   }, [id, navigate]);
 
+  const redirectUrl = `${supabaseStorageUrl}/${audioPath}`;
+
   // Generate URL that will play the audio when scanned
   const generateQR = () => {
-    const url = `${window.location.origin}/tree/${id}/audio`;
+    const url = redirectUrl;
+    // const url = `${window.location.origin}/tree/${id}/audio`;
     setQrCodeUrl(url);
   };
 

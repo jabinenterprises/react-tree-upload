@@ -121,9 +121,9 @@ export const generatePlacardPDF = async (tree: Tree) => {
     doc.text(brlDescLine, MARGIN, 70);
 
     // Save the PDF
-    // doc.save(
-    //   `Tree_Placard_${tree.common_name.replace(/\s+/g, "_")}_${tree.id}.pdf`
-    // );
+    doc.save(
+      `Tree_Placard_${tree.common_name.replace(/\s+/g, "_")}_${tree.id}.pdf`
+    );
   } catch (error) {
     console.error("PDF generation failed:", error);
     throw error;
