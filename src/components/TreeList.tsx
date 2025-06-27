@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import type { Tree } from "../types";
-import axios from "axios";
+// import axios from "axios";
+import { FaCheckCircle } from "react-icons/fa";
 
 const TreeList = () => {
   const [trees, setTrees] = useState<Tree[]>([]);
@@ -24,19 +25,6 @@ const TreeList = () => {
     fetchTrees();
   }, []);
 
-  // In a React component or API client file
-  const testConnection = async () => {
-    console.log("my text...");
-    try {
-      const response = await axios.get("http://localhost:3001/api/ping");
-      console.log(response.data); // Should show { message: "Backend is alive!" }
-    } catch (error) {
-      console.error("Backend connection failed:", error);
-    }
-  };
-
-  testConnection;
-
   if (loading) return <div>Loading trees...</div>;
 
   return (
@@ -54,9 +42,19 @@ const TreeList = () => {
     <div className="tree-list">
       <div className="header">
         <h1>Tree Catalog</h1>
-        <Link to="/trees/new" className="create-link">
-          Create new tree
-        </Link>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "start",
+          }}
+        >
+          <Link to="/trees/new" className="create-link">
+            Create new tree
+          </Link>
+
+          <Link to="/placards">Placards</Link>
+        </div>
       </div>
 
       {/* {trees.map((tree) => (
@@ -68,12 +66,16 @@ const TreeList = () => {
       ))} */}
 
       {trees.map((tree) => (
-        <Link
-          to={`/tree/${tree.id}`}
-          key={tree.id}
-          className="tree-card-link" // Optional: for styling
-        >
+        <Link to={`/tree/${tree.id}`} key={tree.id} className="tree-card-link">
           <div className="tree-card">
+            {tree.qr_code_url && (
+              <div className="qr-indicator">
+                <FaCheckCircle
+                  className="check-icon"
+                  title="QR Code Generated"
+                />
+              </div>
+            )}
             <h3>{tree.common_name}</h3>
             <p>Species: {tree.species || "Unknown"}</p>
             <p>Family: {tree.family || "Unknown"}</p>

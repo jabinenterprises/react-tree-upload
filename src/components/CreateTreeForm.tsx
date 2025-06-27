@@ -11,16 +11,6 @@ const CreateTreeForm = () => {
     description: "",
   });
 
-  // In a React component or API client file
-  const testConnection = async () => {
-    try {
-      const response = await axios.get("http://localhost:3001/api/ping");
-      console.log(response.data); // Should show { message: "Backend is alive!" }
-    } catch (error) {
-      console.error("Backend connection failed:", error);
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

@@ -1,9 +1,13 @@
 import { useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import type { Tree, TreeImage, TreeAudio } from "../types";
+import type {
+  Tree,
+  TreeImage,
+  // TreeAudio
+} from "../types";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import QRCode from "react-qr-code";
+// import QRCode from "react-qr-code";
 import { toast } from "react-toastify";
 
 const TreeDetail = () => {
@@ -11,7 +15,7 @@ const TreeDetail = () => {
   const { id } = useParams<{ id: string }>();
   const [tree, setTree] = useState<Tree | null>(null);
   const [images, setImages] = useState<TreeImage[]>([]);
-  const [audio, setAudio] = useState<TreeAudio | null>(null);
+  // const [audio, setAudio] = useState<TreeAudio | null>(null);
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [audioExists, setAudioExists] = useState(false);
   const navigate = useNavigate();
@@ -71,7 +75,7 @@ const TreeDetail = () => {
       //   .single();
 
       // Check if audio exists
-      const { data: audioData, error } = await supabase
+      const { data: audioData } = await supabase
         .from("tree_audio")
         .select("audio_path")
         .eq("tree_id", id)
@@ -82,6 +86,9 @@ const TreeDetail = () => {
       setTree(treeData);
       setImages(imageData || []);
       // setAudio(audioData);
+
+      console.log(images);
+      // console.log(audio);
     };
 
     fetchData();

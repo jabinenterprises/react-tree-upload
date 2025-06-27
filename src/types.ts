@@ -6,6 +6,8 @@ export interface Tree {
   description: string | null;
   qr_code_url?: string;
   qr_code_path?: string;
+  logoUrl?: string;
+  secondaryLogoUrl?: string;
   created_at: string;
 }
 

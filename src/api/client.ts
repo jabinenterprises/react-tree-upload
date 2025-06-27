@@ -20,13 +20,3 @@ export const fetchTrees = async (): Promise<Tree[]> => {
   const response = await apiClient.get("/trees");
   return response.data;
 };
-
-// In a React component or API client file
-export const testConnection = async () => {
-  try {
-    const response = await axios.get("http://localhost:3001/api/ping");
-    console.log(response.data); // Should show { message: "Backend is alive!" }
-  } catch (error) {
-    console.error("Backend connection failed:", error);
-  }
-};

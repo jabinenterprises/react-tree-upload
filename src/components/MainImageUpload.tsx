@@ -70,7 +70,7 @@ const MainImageUpload = () => {
           ← Back to Tree
         </button>
       </div>
-      <h2>Upload Main Image</h2>
+      <h2>Upload Main Image (Thumbnail)</h2>
       {error && <div className="error-message">{error}</div>}
       <div className="upload-area">
         <input

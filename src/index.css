@@ -330,3 +330,61 @@
   margin: 0;
   color: #0d47a1;
 }
+
+/* ------------------------------------------------------------------------------------------------ */
+
+.tree-card {
+  position: relative; /* Needed for absolute positioning of indicator */
+  /* Your existing card styles */
+}
+
+.qr-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+.check-icon {
+  color: #4caf50; /* Green color for the check */
+  font-size: 1.3rem;
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+}
+
+/* ---------------------------------------------------------------------------------------------------------- */
+
+.placard-page {
+  max-width: 1800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* for non Tailwind */
+.placard-page h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  color: #2d3748;
+}
+
+/* ------------------------------------------------------------------------------------------------------- */
+
+.placard-template-page1,
+.placard-template-page2 {
+  background-color: white;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 100%;
+}
+
+.template-controls input {
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.template-controls label {
+  font-weight: 500;
+  color: #374151;
+}
