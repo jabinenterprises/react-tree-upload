@@ -125,10 +125,10 @@ const AudioUpload = () => {
       }
 
       // Smart redirect
-      // navigate(fromQR ? `/tree/${id}/generate-qr` : `/tree/${id}`);
+      navigate(fromQR ? `/tree/${id}/generate-qr` : `/tree/${id}`);
 
       toast.success("Audio uploaded successfully!");
-      // navigate(`/tree/${id}`);
+      navigate(`/tree/${id}`);
     } catch (error) {
       console.error("Full error details:", error);
       setError(

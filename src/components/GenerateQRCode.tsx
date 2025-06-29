@@ -45,7 +45,7 @@ const GenerateQRCode = () => {
   }, [id, navigate]);
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-  const redirectUrl = `${baseUrl}/qr-redirect/${id}`;
+  const redirectUrl = `${baseUrl}/api/qr-redirect/${id}`;
 
   // Generate URL that will play the audio when scanned
   const generateQR = () => {
