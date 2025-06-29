@@ -118,6 +118,16 @@ const GenerateQRCode = () => {
 
       if (dbError) throw dbError;
 
+      const { error: dbErrorMsg } = await supabase
+        .from("trees")
+        .update({
+          qr_code_url: publicUrl,
+          qr_code_path: filePath,
+        })
+        .eq("id", id);
+
+      if (dbError) throw dbErrorMsg;
+
       toast.success("QR code saved successfully!");
       navigate(`/tree/${id}`);
     } catch (error) {
