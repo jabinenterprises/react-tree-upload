@@ -23,17 +23,9 @@ export interface TreeAudio {
   tree_id: number;
   audio_path: string;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 670791e98f162d3f0760fec09ef25a8c0f46fd5a
 export interface TreeQR {
   id: string;
   tree_id: number;
   audio_id: string;
   audio_url?: string;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 670791e98f162d3f0760fec09ef25a8c0f46fd5a
