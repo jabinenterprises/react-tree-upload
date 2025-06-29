@@ -118,6 +118,7 @@ const GenerateQRCode = () => {
 
       if (dbError) throw dbError;
 
+<<<<<<< HEAD
       const { error: dbErrorMsg } = await supabase
         .from("trees")
         .update({
@@ -128,6 +129,8 @@ const GenerateQRCode = () => {
 
       if (dbError) throw dbErrorMsg;
 
+=======
+>>>>>>> 670791e98f162d3f0760fec09ef25a8c0f46fd5a
       toast.success("QR code saved successfully!");
       navigate(`/tree/${id}`);
     } catch (error) {
