@@ -23,3 +23,11 @@ export interface TreeAudio {
   tree_id: number;
   audio_path: string;
 }
+
+export interface TreeQR {
+  id: string;
+  tree_id: number;
+  audio_id: string;
+  audio_url?: string;
+}
+
