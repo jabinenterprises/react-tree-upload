@@ -3,10 +3,10 @@ const bufferToBase64 = (buffer: ArrayBuffer): string => {
   return btoa(binary);
 };
 
-const response = await fetch("/fonts/aloevera/Aloevera-Regular.ttf");
-const buffer = await response.arrayBuffer();
-const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
-console.log("base64", base64);
+// const response = await fetch("/fonts/aloevera/Aloevera-Regular.ttf");
+// const buffer = await response.arrayBuffer();
+// const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+// console.log("base64", base64);
 
 type FontStyle = "normal" | "bold" | "italic" | "bolditalic";
 

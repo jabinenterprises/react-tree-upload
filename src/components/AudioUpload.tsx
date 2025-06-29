@@ -1,7 +1,11 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
+import type { TreeQR } from "../types";
+
+const supabaseStorageUrl =
+  "https://qsvuddnbvuuzpnwofnzy.supabase.co/storage/v1/object/public";
 
 const AudioUpload = () => {
   const { id } = useParams();
@@ -9,12 +13,28 @@ const AudioUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [treeQR, setTreeQR] = useState<TreeQR | null>(null);
+  // const [qrCodeUrl, setQrCodeUrl] = useState("");
 
   const location = useLocation();
 
   const fromQR =
     location.state?.fromQR ||
     new URLSearchParams(location.search).get("from") === "qr";
+
+  useEffect(() => {
+    const fetchQR = async () => {
+      const { data: treeQRCode } = await supabase
+        .from("qr_codes")
+        .select("*")
+        .eq("tree_id", id)
+        .single();
+
+      setTreeQR(treeQRCode);
+    };
+
+    fetchQR();
+  }, [id]);
 
   const handleUpload = async () => {
     if (!file || !id) return;
@@ -23,15 +43,15 @@ const AudioUpload = () => {
     setError(null);
 
     try {
-      // 1. Delete existing audio if any
       const { data: existingAudio, error: findError } = await supabase
         .from("tree_audio")
-        .select("audio_path")
+        .select("audio_path, id")
         .eq("tree_id", id)
         .maybeSingle();
 
       if (findError) throw findError;
 
+      // Delete old audio file if exists
       if (existingAudio?.audio_path) {
         const { error: deleteError } = await supabase.storage
           .from("tree-audio")
@@ -40,13 +60,32 @@ const AudioUpload = () => {
         if (deleteError) throw deleteError;
       }
 
-      // 2. Upload new audio
+      // Upload new audio
       const fileExt = file.name.split(".").pop();
       const fileName = `audio-${Date.now()}.${fileExt}`;
       const filePath = `trees/${id}/${fileName}`;
 
+      // const audioUrl = `${supabaseStorageUrl}/tree-audio/${treeAudio.audio_path}`;
+
+      // Update database
+      const { data: newAudio, error: dbError } = await supabase
+        .from("tree_audio")
+        .upsert(
+          {
+            tree_id: id,
+            audio_path: filePath,
+            updated_at: new Date().toISOString(),
+            audio_url: `${supabaseStorageUrl}/tree-audio/${filePath}`,
+          },
+          { onConflict: "tree_id" } // Ensures only one record per tree
+        )
+        .select()
+        .single();
+
+      if (dbError) throw dbError;
+
       const { error: uploadError } = await supabase.storage
-        .from("tree-audio") // Must match your bucket name
+        .from("tree-audio")
         .upload(filePath, file, {
           cacheControl: "3600",
           upsert: false,
@@ -54,29 +93,42 @@ const AudioUpload = () => {
 
       if (uploadError) throw uploadError;
 
-      // 3. Update database
-      const { error: dbError } = await supabase.from("tree_audio").upsert(
-        {
-          tree_id: id,
-          audio_path: filePath,
-          updated_at: new Date().toISOString(),
-        },
-        { onConflict: "tree_id" } // Ensures only one record per tree
-      );
+      // Get public URL for the new audio
+      const {
+        data: { publicUrl: audioPublicUrl },
+      } = supabase.storage.from("tree-audio").getPublicUrl(filePath);
 
-      if (dbError) throw dbError;
+      // Update qr_codes table if QR code exists for this tree
+      const { data: existingQrCode } = await supabase
+        .from("qr_codes")
+        .select("*")
+        .eq("tree_id", id)
+        .maybeSingle();
 
-      toast.success(
-        fromQR
-          ? "Audio uploaded! Redirecting to QR generation..."
-          : "Audio uploaded successfully!"
-      );
+      if (existingQrCode) {
+        const { error: qrUpdateError } = await supabase
+          .from("qr_codes")
+          .update({
+            audio_url: audioPublicUrl,
+            tree_audio_id: newAudio.id,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("tree_id", id);
+
+        if (qrUpdateError) throw qrUpdateError;
+      }
+
+      if (treeQR) {
+        console.log(`qr code exists for tree ${id}`);
+      } else {
+        console.log(`qr code for tree ${id} does not exist`);
+      }
 
       // Smart redirect
-      navigate(fromQR ? `/tree/${id}/generate-qr` : `/tree/${id}`);
+      // navigate(fromQR ? `/tree/${id}/generate-qr` : `/tree/${id}`);
 
       toast.success("Audio uploaded successfully!");
-      navigate(`/tree/${id}`);
+      // navigate(`/tree/${id}`);
     } catch (error) {
       console.error("Full error details:", error);
       setError(

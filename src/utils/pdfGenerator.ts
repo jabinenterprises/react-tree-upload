@@ -24,10 +24,10 @@ export const generatePlacardPDF = async (tree: Tree) => {
     compress: true,
   });
 
-  doc.setDrawColor(255, 0, 0); // Red
-  doc.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT); // Page boundary
-  doc.rect(MARGIN, MARGIN, PAGE_WIDTH - 2 * MARGIN, PAGE_HEIGHT - 2 * MARGIN); // Safe area
-  doc.setDrawColor(0); // Reset to black
+  // doc.setDrawColor(255, 0, 0); // Red
+  // doc.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT); // Page boundary
+  // doc.rect(MARGIN, MARGIN, PAGE_WIDTH - 2 * MARGIN, PAGE_HEIGHT - 2 * MARGIN); // Safe area
+  // doc.setDrawColor(0); // Reset to black
 
   const loadStaticLogo = (path: string): Promise<HTMLImageElement> => {
     return new Promise((resolve) => {

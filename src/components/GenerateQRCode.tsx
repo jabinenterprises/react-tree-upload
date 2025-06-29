@@ -7,7 +7,7 @@ import type { TreeAudio } from "../types";
 // import { unescape } from "querystring";
 
 const supabaseStorageUrl =
-  "https://qsvuddnbvuuzpnwofnzy.supabase.co/storage/v1/object/public/tree-audio/";
+  "https://qsvuddnbvuuzpnwofnzy.supabase.co/storage/v1/object/public";
 
 const GenerateQRCode = () => {
   const { id } = useParams<{ id: string }>();
@@ -16,54 +16,49 @@ const GenerateQRCode = () => {
   const [isSaving, setIsSaving] = useState(false);
   const qrCodeRef = useRef<HTMLDivElement>(null);
   const [treeAudio, setTreeAudio] = useState<TreeAudio | null>(null);
+  // const [treeQR, setTreeQR] = useState<TreeQR | null>(null);
   // const [audioExists, setAudioExists] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      // Check if audio exists
-      const { data: audioData } = await supabase
+    const checkAudio = async () => {
+      const { data: audioData, error } = await supabase
         .from("tree_audio")
         .select("*")
         .eq("tree_id", id)
         .single();
 
-      setTreeAudio(audioData);
-    };
-
-    fetchData();
-  }, [id]);
-
-  const audioPath = treeAudio?.audio_path;
-
-  useEffect(() => {
-    const checkAudio = async () => {
-      const { data, error } = await supabase
-        .from("tree_audio")
-        .select("audio_path")
-        .eq("tree_id", id)
-        .single();
-
-      if (error || !data?.audio_path) {
-        toast.error("Audio required before generating QR code");
+      if (error || !audioData?.audio_path) {
+        toast.error("Audio is required before generating QR code");
         navigate(`/tree/${id}/upload/audio`);
+        return;
       }
+
+      setTreeAudio(audioData?.audio_path);
+
+      // //  Generate QR code pointing to our redirect endpoint
+      // if (audioData) {
+      //   setQrCodeUrl(`${import.meta.env.VITE_API_BASE_URL}/qr-redirect/${id}`);
+      // }
     };
 
     checkAudio();
   }, [id, navigate]);
 
-  const redirectUrl = `${supabaseStorageUrl}/${audioPath}`;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const redirectUrl = `${baseUrl}/qr-redirect/${id}`;
 
   // Generate URL that will play the audio when scanned
   const generateQR = () => {
-    const url = redirectUrl;
-    // const url = `${window.location.origin}/tree/${id}/audio`;
-    setQrCodeUrl(url);
+    if (!treeAudio) return;
+    setQrCodeUrl(redirectUrl);
   };
 
   // Convert QR code to image and upload to storage
   const saveQRCode = async () => {
-    if (!qrCodeUrl || !id || !qrCodeRef.current) return;
+    if (!qrCodeUrl || !id || !qrCodeRef.current || !treeAudio) {
+      toast.error("Missing required data");
+      return;
+    }
 
     setIsSaving(true);
 
@@ -77,50 +72,54 @@ const GenerateQRCode = () => {
       const ctx = canvas.getContext("2d");
       const img = new Image();
 
-      img.onload = async () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
+      const pngBlob = await new Promise<Blob>((resolve, reject) => {
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx?.drawImage(img, 0, 0);
+          canvas.toBlob((blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error("Canvas to blob conversion failed"));
+          }, "image/png");
+        };
+        img.onerror = reject;
+        img.src = `data:image/svg+xml;base64,${btoa(
+          unescape(encodeURIComponent(svgData))
+        )}`;
+      });
 
-        // 2. Convert to blob
-        canvas.toBlob(async (blob) => {
-          if (!blob) {
-            throw new Error("Failed to convert QR code to image");
-          }
+      // Upload to Supabase Storage
+      const fileName = `tree_${id}_${Date.now()}.png`;
+      const filePath = `qr-codes/${fileName}`;
 
-          // 3. Upload to Supabase Storage
-          const filePath = `qr-codes/${id}.png`;
-          const { error: uploadError } = await supabase.storage
-            .from("qrcodes") // Make sure this bucket exists
-            .upload(filePath, blob);
+      const { error: uploadError } = await supabase.storage
+        .from("qrcodes")
+        .upload(filePath, pngBlob, { upsert: true });
 
-          if (uploadError) throw uploadError;
+      if (uploadError) throw uploadError;
 
-          // 4. Get public URL
-          const {
-            data: { publicUrl },
-          } = supabase.storage.from("qrcodes").getPublicUrl(filePath);
+      // Get public URL
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("qrcodes").getPublicUrl(filePath);
 
-          // 5. Save URL to database
-          const { error: dbError } = await supabase
-            .from("trees")
-            .update({
-              qr_code_url: publicUrl,
-              qr_code_path: filePath,
-            })
-            .eq("id", id);
+      // Save to database
+      const { error: dbError } = await supabase.from("qr_codes").upsert(
+        {
+          tree_id: id,
+          tree_audio_id: treeAudio.id,
+          qr_code_path: filePath,
+          qr_code_url: publicUrl,
+          redirect_url: `${redirectUrl}`,
+          audio_url: `${supabaseStorageUrl}/tree-audio/${treeAudio.audio_path}`,
+        },
+        { onConflict: "tree_id" }
+      );
 
-          if (dbError) throw dbError;
+      if (dbError) throw dbError;
 
-          toast.success("QR code saved successfully!");
-          navigate(`/tree/${id}`);
-        }, "image/png");
-      };
-
-      //   img.src = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgData))}`;
-      img.src = `data:image/svg+xml;base64,${btoa(
-        unescape(encodeURIComponent(svgData))
-      )}`;
+      toast.success("QR code saved successfully!");
+      navigate(`/tree/${id}`);
     } catch (error) {
       console.error("Error saving QR code:", error);
       toast.error(
