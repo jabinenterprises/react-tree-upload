@@ -5,22 +5,22 @@ const ALOEVERA_REGULAR =
 
 // export const registerFonts = () => {}
 // Helper to convert ArrayBuffer to Base64
-const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-  const bytes = new Uint8Array(buffer);
-  return btoa(String.fromCharCode(...bytes));
-};
+// const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+//   const bytes = new Uint8Array(buffer);
+//   return btoa(String.fromCharCode(...bytes));
+// };
 
 export const registerFonts = async () => {
   try {
     const doc = new jsPDF();
 
-    // 1. Add to Virtual File System
+    //  add to virtual file system
     doc.addFileToVFS("Aloevera-Regular.ttf", ALOEVERA_REGULAR);
 
-    // 2. Register the font
+    //  register the font
     doc.addFont("Aloevera-Regular.ttf", "Aloevera", "normal");
 
-    // 3. Verify registration
+    // verify registration
     const fontList = doc.getFontList();
     console.log("Registered fonts:", fontList);
 
