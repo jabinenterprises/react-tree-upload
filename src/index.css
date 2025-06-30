@@ -388,3 +388,74 @@
   font-weight: 500;
   color: #374151;
 }
+
+/* ===================================================================================================== */
+
+/* src/styles/pdf-preview.css */
+.pdf-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.pdf-page {
+  position: relative;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  page-break-after: always;
+}
+
+.braille-page {
+  font-family: "Braille", sans-serif;
+}
+
+.preview-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.controls {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f5f5f5;
+  border-radius: 5px;
+}
+
+.form-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.form-fields label {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-fields input,
+.form-fields textarea {
+  padding: 8px;
+  margin-top: 5px;
+}
+
+/* ============================================================================================================ */
+/* font faces */
+@font-face {
+  font-family: "Aloevera";
+  src: url("/public/fonts/aloevera/aloevera.regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Braille";
+  src: url("/public/fonts/braille/BrailleCc0-DOeDd.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}

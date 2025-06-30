@@ -53,7 +53,12 @@ const TreeList = () => {
             Create new tree
           </Link>
 
-          <Link to="/placards">Placards</Link>
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
+            <Link to="/placards">Placards</Link>
+            <Link to="/placards-small">Small Placards</Link>
+          </div>
         </div>
       </div>
 
