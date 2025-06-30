@@ -32,13 +32,13 @@ const PlacardSmallDesign = () => {
   }, []);
 
   // Fetch trees (example)
-  useEffect(() => {
-    const fetchTrees = async () => {
-      const { data } = await supabase.from("trees").select("*");
-      setTrees(data || []);
-    };
-    fetchTrees();
-  }, []);
+  // useEffect(() => {
+  //   const fetchTrees = async () => {
+  //     const { data } = await supabase.from("trees").select("*");
+  //     setTrees(data || []);
+  //   };
+  //   fetchTrees();
+  // }, []);
 
   const handleExportAll = async () => {
     if (!trees.length) {
