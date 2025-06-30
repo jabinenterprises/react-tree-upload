@@ -3,7 +3,8 @@ import { jsPDF } from "jspdf";
 export const registerCustomFont = async () => {
   try {
     const fontName = "Aloevera";
-    const fontPath = "/public/fonts/aloevera/aloevera.regular.ttf";
+    // const fontPath = "/public/fonts/aloevera/aloevera.regular.ttf";
+    const fontPath = "/public/fonts/braille/BrailleCc0-DOeDd.ttf";
 
     // Load font file
     const response = await fetch(fontPath);
@@ -14,7 +15,7 @@ export const registerCustomFont = async () => {
     // Convert to Base64
     const fontBase64 = arrayBufferToBase64(fontData);
 
-    console.log(fontBase64);
+    console.log("Base64 for braille font:", fontBase64);
 
     // Initialize jsPDF and register font
     const doc = new jsPDF();

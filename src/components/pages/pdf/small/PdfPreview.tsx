@@ -20,7 +20,6 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
 
   if (!tree) {
     return <div>Loading tree data...</div>;
-    // or return null;
   }
 
   useEffect(() => {
@@ -35,9 +34,6 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
         setMainLogo(main);
         setSecondaryLogo(secondary);
         setQrCode(qr);
-
-        console.log(mainLogo);
-        console.log(secondaryLogo);
       } catch (error) {
         console.error("Error loading images:", error);
       }
@@ -63,67 +59,69 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
         style={{
           width: `${PAGE_WIDTH}px`,
           height: `${PAGE_HEIGHT}px`,
-          //   marginBottom: "20px",
           margin: `${MARGIN}px`,
-          //   background: "red",
         }}
       >
+        {/* very top */}
+        <div
+          className="very-top-section"
+          style={{
+            width: "100%",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "end",
+            padding: "10px",
+          }}
+        >
+          {mainLogo && (
+            <img
+              src={mainLogo.src}
+              alt="Main Logo"
+              style={{
+                position: "relative",
+                right: `${MARGIN}px`,
+                top: `0`,
+                width: `auto`,
+                height: `${23 * scale}px`,
+              }}
+            />
+          )}
+        </div>
+
         {/* Top Section */}
         <div
           className="top-section"
-          style={{ padding: `${MARGIN}px`, textAlign: "center" }}
+          style={{ padding: `0px`, textAlign: "center" }}
         >
           <p
             style={{
               fontFamily: "'Aloevera', sans-serif",
-              fontSize: `${10 * scale}px`,
+              fontSize: `${9 * scale}px`,
               margin: 0,
             }}
           >
             {tree.species}
           </p>
-          {/* <p
-            style={{ fontSize: `${16 * scale}px`, margin: `${15 * scale}px 0` }}
-          >
-            Common name: {tree.common_name}
-          </p> */}
           <p
             style={{
               fontFamily: "'Aloevera', sans-serif",
-              fontSize: `${10 * scale}px`,
+              fontSize: `${7 * scale}px`,
               margin: 0,
             }}
           >
-            Family: {tree.family}
+            Common name: {tree.common_name}
+          </p>
+          <p
+            style={{
+              fontFamily: "'Aloevera', sans-serif",
+              fontSize: `${6 * scale}px`,
+              margin: 0,
+            }}
+          >
+            Family: {tree.family?.toUpperCase()}
           </p>
         </div>
-
-        {/* Main Logo */}
-        {/* {mainLogo && (
-          <img
-            src={mainLogo.src}
-            alt="Main Logo"
-            style={{
-              position: "absolute",
-              right: `${MARGIN}px`,
-              top: `${5 * scale}px`,
-              width: `${68 * scale}px`,
-              height: `${45 * scale}px`,
-            }}
-          />
-        )} */}
-
-        {/* Description */}
-        {/* <div
-          className="description"
-          style={{
-            padding: `${MARGIN}px`,
-            marginTop: `${25 * scale}px`,
-            fontWeight: "bold",
-          }}
-        >
-          {tree.description}
-        </div> */}
 
         {/* QR Code */}
         <div
@@ -134,8 +132,7 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
             alignItems: "center",
             justifyContent: "center",
             position: "relative",
-            // bottom: `${10 * scale}px`,
-            // left: `${10 * scale}px`,
+            marginTop: "5px",
           }}
         >
           {qrCode && (
@@ -143,25 +140,24 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
               src={qrCode.src}
               alt="QR Code"
               style={{
-                width: `${80 * scale}px`,
-                height: `${80 * scale}px`,
+                width: `${65 * scale}px`,
+                height: `${65 * scale}px`,
               }}
             />
           )}
           <p
             style={{
-              // marginLeft: `${45 * scale}px`,
-              // marginTop: `${10 * scale}px`,
               fontFamily: "'Aloevera', sans-serif",
               fontSize: `${9 * scale}px`,
+              margin: "5px 0px",
             }}
           >
             Scan Me
           </p>
         </div>
 
-        {/* Secondary Logo */}
-        {/* {secondaryLogo && (
+        {/* secondary bottom most logo */}
+        {secondaryLogo && (
           <img
             src={secondaryLogo.src}
             alt="Secondary Logo"
@@ -169,16 +165,16 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
               position: "absolute",
               right: `${MARGIN}px`,
               bottom: `${7 * scale}px`,
-              width: `${50 * scale}px`,
-              height: `${50 * scale}px`,
+              width: `${20 * scale}px`,
+              height: `${20 * scale}px`,
             }}
           />
-        )} */}
+        )}
       </div>
 
       {/* Page 2 - Braille Placard */}
 
-      {/* <div
+      <div
         className="pdf-page braille-page"
         style={{
           width: `${PAGE_WIDTH}px`,
@@ -186,33 +182,84 @@ const PdfPreview = ({ tree, scale = 1 }: PdfPreviewProps) => {
           fontFamily: "'Braille', sans-serif",
         }}
       >
-        Top Section
-        <div className="top-section" style={{ padding: `${MARGIN}px` }}>
-          <h1 style={{ fontSize: `${16 * scale}px`, margin: 0 }}>
+        {/* very top */}
+        <div
+          className="very-top-section"
+          style={{
+            width: "100%",
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "end",
+            padding: "10px",
+          }}
+        >
+          {mainLogo && (
+            <img
+              src={mainLogo.src}
+              alt="Main Logo"
+              style={{
+                position: "relative",
+                right: `${MARGIN}px`,
+                top: `0`,
+                width: `auto`,
+                height: `${23 * scale}px`,
+              }}
+            />
+          )}
+        </div>
+
+        {/* Middle Section */}
+        <div
+          className="middle-section"
+          style={{
+            padding: `${MARGIN}px`,
+            // background: "red",
+            textAlign: "center",
+          }}
+        >
+          <h1 style={{ fontSize: `${13 * scale}px`, margin: 0 }}>
             {tree.species}
           </h1>
           <p
-            style={{ fontSize: `${18 * scale}px`, margin: `${15 * scale}px 0` }}
+            style={{ fontSize: `${11 * scale}px`, margin: `${15 * scale}px 0` }}
           >
             Common name: {tree.common_name}
           </p>
-          <p style={{ fontSize: `${18 * scale}px`, margin: 0 }}>
-            Family: {tree.family}
+          <p style={{ fontSize: `${10 * scale}px`, margin: 0 }}>
+            Family: {tree.family?.toUpperCase()}
           </p>
         </div>
 
-        Braille Description
+        {/* secondary bottom most logo */}
         <div
-          className="description"
+          className="bottom-most"
           style={{
-            padding: `${MARGIN}px`,
-            marginTop: `${25 * scale}px`,
-            fontFamily: "'Braille', sans-serif",
+            position: "absolute",
+            bottom: "0",
+            left: "0",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "end",
+            // background: "blue",
           }}
         >
-          {tree.description}
+          {secondaryLogo && (
+            <img
+              src={secondaryLogo.src}
+              alt="Secondary Logo"
+              style={{
+                position: "relative",
+                right: `${MARGIN}px`,
+                width: `${20 * scale}px`,
+                height: `${20 * scale}px`,
+                marginBottom: "10px",
+              }}
+            />
+          )}
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };
